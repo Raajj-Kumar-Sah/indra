@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Customer & Partner Access | Indira Industries</title>
+  <link rel="stylesheet" href="/theme.css">
+  <style>
+    body {
+      min-height: 100vh;
+      background: #171710;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .login-card {
+      width: min(100%, 460px);
+      background: #fffdf7;
+      padding: 40px;
+      border: 1px solid #dedace;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+    }
+    .login-card .brand {
+      justify-content: center;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .login-card h1 {
+      font-size: 32px;
+      line-height: 1.15;
+      margin: 8px 0 14px;
+      color: #171710;
+    }
+    .login-card > p {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .login-card label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 14px 0 6px;
+      color: #333;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #dedace;
+      background: white;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-card input:focus {
+      border-color: #b58b2e;
+    }
+    .login-card .btn {
+      width: 100%;
+      margin-top: 12px;
+      padding: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+    }
+    .login-message {
+      font-size: 13px;
+      min-height: 22px;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+    .login-message.error { color: #a33428; }
+    .login-message.success { color: #2e6930; }
+    .auth-toggle-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .dev-bypass {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px dashed #d5d0c2;
+      text-align: center;
+    }
+    .dev-bypass small {
+      display: block;
+      color: #888;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .dev-btn-group {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    .dev-btn-group button {
+      background: #f4f0e6;
+      border: 1px solid #dcd5c5;
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 2px;
+    }
+    .dev-btn-group button:hover {
+      background: #e9e3d3;
+    }
+  </style>
+</head>
+<body>
+  <main class="login-card">
+    <a class="brand" href="/">
+      <span class="brand-mark" style="background:#b58b2e;color:#fff;padding:6px 10px;font-weight:900;letter-spacing:0.05em">IND</span>
+      <span class="brand-copy" style="color:#171710;display:flex;flex-direction:column">
+        <b style="font-size:15px;letter-spacing:0.08em">INDIRA INDUSTRIES</b>
+        <small style="font-size:9px;color:#888;letter-spacing:0.12em">THE NAME OF TRUST</small>
+      </span>
+    </a>
+
+    <div class="eyebrow" style="color:#b58b2e;font-size:11px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase">SECURE PORTAL ACCESS</div>
+    <h1 id="title">Sign in to your account.</h1>
+    <p id="subtitle">Access your company quotations, order progress, and commercial RFQs.</p>
+
+    <form id="authForm">
+      <div id="signupFields" hidden>
+        <label for="fullName">Full Name *</label>
+        <input id="fullName" name="fullName" autocomplete="name" placeholder="Vikram Sharma">
+
+        <label for="companyName">Company / Plant Name *</label>
+        <input id="companyName" name="companyName" placeholder="Acme Engineering Pvt Ltd">
+
+        <label for="phone">Phone / WhatsApp</label>
+        <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210">
+      </div>
+
+      <label for="email">Work Email *</label>
+      <input id="email" type="email" autocomplete="email" required maxlength="254" placeholder="you@company.com">
+
+      <label for="password">Password *</label>
+      <input id="password" type="password" autocomplete="current-password" required minlength="6" maxlength="128" placeholder="••••••••">
+
+      <button class="btn btn-gold" id="submitBtn" type="submit">Sign In →</button>
+    </form>
+
+    <div class="auth-toggle-group">
+      <button class="btn btn-dark" id="toggleMode" type="button" style="flex:1">Create Account</button>
+      <button class="btn" id="resetPassword" type="button" style="flex:1;background:#f5f2e9;border:1px solid #ddd">Forgot Password?</button>
+    </div>
+
+    <p class="login-message" id="message" role="status" aria-live="polite"></p>
+
+    <!-- Quick Dev Mode Access (active in dev/fallback mode) -->
+    <div class="dev-bypass" id="devBypass">
+      <small>⚡ Quick 1-Click Access (Dev / Demo Mode)</small>
+      <div class="dev-btn-group">
+        <button type="button" id="demoCustomerBtn">Demo Customer</button>
+        <button type="button" id="demoAdminBtn">Demo Admin</button>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:20px">
+      <a href="/shop/" style="color:#777;font-size:12px;text-decoration:none">← Return to Product Catalogue</a>
+    </div>
+  </main>
+
+  <!-- Supabase CDN Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    (async () => {
+      const $ = id => document.getElementById(id);
+      const form = $('authForm');
+      const msg = $('message');
+      let isCreating = false;
+      let supabaseClient = null;
+
+      const nextParam = new URLSearchParams(location.search).get('next');
+      const nextUrl = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//') ? nextParam : '/account/orders/';
+
+      function say(text, isError = false) {
+        msg.textContent = text;
+        msg.className = 'login-message ' + (isError ? 'error' : 'success');
+      }
+
+      // Initialize Supabase from backend config
+      try {
+        const res = await fetch('/api/config');
+        const cfg = await res.json();
+        if (cfg.supabaseUrl && cfg.supabaseAnonKey) {
+          supabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey);
+        }
+      } catch (err) {
+        console.warn('Supabase config fetch failed:', err);
+      }
+
+      // Toggle between Login and Signup modes
+      $('toggleMode').addEventListener('click', () => {
+        isCreating = !isCreating;
+        $('title').textContent = isCreating ? 'Create corporate account.' : 'Sign in to your account.';
+        $('subtitle').textContent = isCreating 
+          ? 'Register to place bulk commercial RFQs and manage specifications.' 
+          : 'Access your company quotations, order progress, and commercial RFQs.';
+        $('submitBtn').textContent = isCreating ? 'Create Account →' : 'Sign In →';
+        $('toggleMode').textContent = isCreating ? 'Existing Account? Sign In' : 'Create Account';
+        $('signupFields').hidden = !isCreating;
+        $('password').autocomplete = isCreating ? 'new-password' : 'current-password';
+        say('');
+      });
+
+      // Submit Auth Form
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = $('submitBtn');
+        btn.disabled = true;
+        say('Processing...');
+
+        const email = $('email').value.trim();
+        const password = $('password').value;
+        const fullName = $('fullName').value.trim();
+        const companyName = $('companyName').value.trim();
+        const phone = $('phone').value.trim();
+
+        try {
+          if (supabaseClient) {
+            // Live Supabase Authentication
+            if (isCreating) {
+              const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: {
+                  data: {
+                    full_name: fullName,
+                    company_name: companyName,
+                    phone: phone,
+                    role: 'customer'
+                  }
+                }
+              });
+              if (error) throw error;
+              if (data.session) {
+                localStorage.setItem('indira_auth_token', data.session.access_token);
+                localStorage.setItem('indira_auth_user', JSON.stringify(data.user));
+                say('Account created! Redirecting...');
+                setTimeout(() => location.replace(nextUrl), 800);
+              } else {
+                say('Account created! Please check your email to verify your address.', false);
+              }
+            } else {
+              const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email,
+                password
+              });
+              if (error) throw error;
+              localStorage.setItem('indira_auth_token', data.session.access_token);
+              localStorage.setItem('indira_auth_user', JSON.stringify(data.user));
+              say('Signed in successfully! Redirecting...');
+              setTimeout(() => location.replace(nextUrl), 500);
+            }
+          } else {
+            // Fallback / Dev mode login
+            const res = await fetch('/api/auth/demo-login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, role: 'customer' })
+            });
+            const data = await res.json();
+            localStorage.setItem('indira_auth_token', data.token);
+            localStorage.setItem('indira_auth_user', JSON.stringify(data.user));
+            say('Signed in (Autonomous Dev Mode). Redirecting...');
+            setTimeout(() => location.replace(nextUrl), 500);
+          }
+        } catch (err) {
+          say(err.message || 'Authentication failed. Please check your credentials.', true);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      // Password Reset
+      $('resetPassword').addEventListener('click', async () => {
+        const email = $('email').value.trim();
+        if (!email) {
+          say('Please enter your email address first.', true);
+          return;
+        }
+        if (!supabaseClient) {
+          say('Password reset is simulated in dev mode. You can log in directly.');
+          return;
+        }
+        try {
+          const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
+          if (error) throw error;
+          say('Password reset instructions sent to your email.');
+        } catch (err) {
+          say(err.message || 'Could not send reset email.', true);
+        }
+      });
+
+      // Quick Dev Mode Buttons
+      $('demoCustomerBtn').addEventListener('click', async () => {
+        const res = await fetch('/api/auth/demo-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'buyer@acmeind.com', role: 'customer' })
+        });
+        const data = await res.json();
+        localStorage.setItem('indira_auth_token', data.token);
+        localStorage.setItem('indira_auth_user', JSON.stringify(data.user));
+        say('Signed in as Demo Customer. Redirecting...');
+        setTimeout(() => location.replace(nextUrl), 400);
+      });
+
+      $('demoAdminBtn').addEventListener('click', async () => {
+        const res = await fetch('/api/auth/demo-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: 'admin@indiraindustries.co.in', role: 'admin' })
+        });
+        const data = await res.json();
+        localStorage.setItem('indira_auth_token', data.token);
+        localStorage.setItem('indira_auth_user', JSON.stringify(data.user));
+        say('Signed in as System Administrator. Redirecting to Admin...');
+        setTimeout(() => location.replace('/admin/'), 400);
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="description" content="Track Indira Industries commercial quotations and dispatch progress.">
+  <title>Track Order & Quotation | Indira Industries</title>
+  <link rel="stylesheet" href="/theme.css">
+  <style>
+    .track-shell {
+      max-width: 780px;
+      margin: auto;
+      padding: 65px 24px 100px;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .track-shell h1 {
+      font-size: clamp(34px, 6vw, 54px);
+      margin: 12px 0 16px;
+      color: #171710;
+    }
+    .track-shell p {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.7;
+    }
+    .track-card {
+      background: #fff;
+      border: 1px solid #e5e1d6;
+      padding: 30px;
+      margin-top: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    }
+    .track-card label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 15px 0 7px;
+      color: #333;
+    }
+    .track-card input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #dedace;
+      font-size: 14px;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .track-card input:focus { border-color: #b58b2e; }
+    .track-card .btn {
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .track-result-box {
+      margin-top: 28px;
+      background: #fffdf7;
+      border: 1px solid #dfd8c7;
+      padding: 24px;
+    }
+
+    /* 5-Step Visual Timeline */
+    .timeline {
+      display: flex;
+      justify-content: space-between;
+      position: relative;
+      margin: 30px 0 20px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      background: #e2ddd0;
+      z-index: 1;
+    }
+    .timeline-step {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      flex: 1;
+    }
+    .timeline-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid #ccc;
+      margin: auto;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: #888;
+      transition: all 0.3s;
+    }
+    .timeline-step.completed .timeline-dot {
+      background: #2e6930;
+      border-color: #2e6930;
+      color: #fff;
+    }
+    .timeline-step.active .timeline-dot {
+      background: #b58b2e;
+      border-color: #b58b2e;
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba(181, 139, 46, 0.2);
+    }
+    .timeline-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #777;
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .timeline-step.active .timeline-label { color: #b58b2e; }
+    .timeline-step.completed .timeline-label { color: #2e6930; }
+
+    .order-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 13px;
+    }
+    .order-summary-table td {
+      padding: 8px 0;
+      border-bottom: 1px solid #f2ede1;
+    }
+    .track-error {
+      background: #fdf2f2;
+      border: 1px solid #f5c2c2;
+      color: #a33428;
+      padding: 14px;
+      margin-top: 18px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-mark" style="background:#b58b2e;color:#fff;padding:6px 10px;font-weight:900">IND</span>
+      <span class="brand-copy"><b>INDIRA INDUSTRIES</b><small>THE NAME OF TRUST</small></span>
+    </a>
+    <nav>
+      <a href="/shop/">Catalogue</a>
+      <a href="/account/orders/">Client Portal</a>
+    </nav>
+    <a class="header-cta" href="/">Home →</a>
+  </header>
+
+  <main class="track-shell">
+    <div class="eyebrow" style="color:#b58b2e;font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase">ORDER & DISPATCH VERIFICATION</div>
+    <h1>Track your <em style="color:#b58b2e;font-style:normal">consignment.</em></h1>
+    <p>
+      Enter your commercial order reference number (e.g. <code>IND-2026-DEMO01</code>) and the work email used during submission.
+    </p>
+
+    <form class="track-card" id="trackForm">
+      <label for="orderRef">Order Reference Number *</label>
+      <input id="orderRef" name="order_number" required maxlength="50" placeholder="IND-2026-XXXXXXXX" autocomplete="off">
+
+      <label for="email">Billing / Work Email *</label>
+      <input id="email" name="email" type="email" required maxlength="254" autocomplete="email" placeholder="buyer@company.com">
+
+      <button class="btn btn-gold" type="submit" id="trackBtn">Track Consignment →</button>
+      <div id="errorBox" class="track-error" hidden></div>
+    </form>
+
+    <div id="resultBox" class="track-result-box" hidden>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;border-bottom:1px solid #eee;padding-bottom:12px">
+        <div>
+          <span style="font-size:11px;color:#888;text-transform:uppercase;font-weight:700">Commercial Reference</span>
+          <h2 id="resOrderNumber" style="margin:2px 0 0;font-size:22px;color:#171710"></h2>
+        </div>
+        <div>
+          <span style="font-size:11px;color:#888;text-transform:uppercase;font-weight:700">Status</span>
+          <div id="resBadge" style="font-weight:800;font-size:13px;color:#b58b2e;text-transform:uppercase"></div>
+        </div>
+      </div>
+
+      <!-- Visual Step Timeline -->
+      <div class="timeline" id="timelineBar">
+        <div class="timeline-step" id="step-received">
+          <div class="timeline-dot">1</div>
+          <div class="timeline-label">Received</div>
+        </div>
+        <div class="timeline-step" id="step-under_review">
+          <div class="timeline-dot">2</div>
+          <div class="timeline-label">Review</div>
+        </div>
+        <div class="timeline-step" id="step-quoted">
+          <div class="timeline-dot">3</div>
+          <div class="timeline-label">Quoted</div>
+        </div>
+        <div class="timeline-step" id="step-in_production">
+          <div class="timeline-dot">4</div>
+          <div class="timeline-label">Production</div>
+        </div>
+        <div class="timeline-step" id="step-shipped">
+          <div class="timeline-dot">5</div>
+          <div class="timeline-label">Dispatched</div>
+        </div>
+      </div>
+
+      <div style="background:#f9f7f0;padding:16px;border-radius:2px;margin:20px 0" id="carrierInfo" hidden>
+        <span style="font-size:11px;font-weight:700;color:#555;text-transform:uppercase">Dispatch Logistics Carrier:</span>
+        <div style="font-size:14px;color:#171710;margin-top:4px">
+          <b id="resCarrier"></b> — Tracking Docket: <code id="resTrackingNum" style="background:#eee;padding:2px 6px"></code>
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <h4 style="margin:0 0 8px;font-size:13px;text-transform:uppercase;color:#555">Items in Request:</h4>
+        <table class="order-summary-table" id="resItemsTable"></table>
+      </div>
+
+      <div style="margin-top:18px;font-size:11px;color:#888;border-top:1px solid #f0ecdf;padding-top:10px">
+        Last updated: <span id="resUpdated"></span> • For dispatch inquiries call +91 78270 32808
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Indira Industries. All rights reserved.</span>
+      <a href="mailto:admin@indiraindustries.co.in">Commercial Dispatch Desk</a>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const form = document.getElementById('trackForm');
+    const resultBox = document.getElementById('resultBox');
+    const errorBox = document.getElementById('errorBox');
+    const trackBtn = document.getElementById('trackBtn');
+
+    const statusWeights = {
+      'received': 1,
+      'under_review': 2,
+      'quoted': 3,
+      'in_production': 4,
+      'processing': 4,
+      'shipped': 5,
+      'delivered': 5,
+      'completed': 5
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorBox.hidden = true;
+      resultBox.hidden = true;
+      trackBtn.disabled = true;
+      trackBtn.textContent = 'Verifying Record...';
+
+      const payload = {
+        order_number: document.getElementById('orderRef').value.trim(),
+        email: document.getElementById('email').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/orders/track', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Could not locate order.');
+
+        const order = data.order;
+        document.getElementById('resOrderNumber').textContent = order.order_number;
+        document.getElementById('resBadge').textContent = order.status.replace(/_/g, ' ');
+        document.getElementById('resUpdated').textContent = new Date(order.updated_at).toLocaleString();
+
+        // Update step visualizer
+        const currentWeight = statusWeights[order.status] || 1;
+        const steps = ['received', 'under_review', 'quoted', 'in_production', 'shipped'];
+        steps.forEach((st, idx) => {
+          const el = document.getElementById('step-' + st);
+          if (!el) return;
+          el.className = 'timeline-step';
+          if (idx + 1 < currentWeight) el.classList.add('completed');
+          else if (idx + 1 === currentWeight) el.classList.add('active');
+        });
+
+        // Carrier details
+        const carrierBox = document.getElementById('carrierInfo');
+        if (order.tracking_number) {
+          carrierBox.hidden = false;
+          document.getElementById('resCarrier').textContent = order.tracking_carrier || 'Surface Express';
+          document.getElementById('resTrackingNum').textContent = order.tracking_number;
+        } else {
+          carrierBox.hidden = true;
+        }
+
+        // Items table
+        const table = document.getElementById('resItemsTable');
+        table.innerHTML = (Array.isArray(order.items) ? order.items : []).map(i => `
+          <tr>
+            <td><b>${i.name}</b> (${i.division})</td>
+            <td style="text-align:right">Qty: <b>${i.quantity}</b></td>
+          </tr>
+        `).join('');
+
+        resultBox.hidden = false;
+      } catch (err) {
+        errorBox.textContent = err.message || 'Order lookup failed.';
+        errorBox.hidden = false;
+      } finally {
+        trackBtn.disabled = false;
+        trackBtn.textContent = 'Track Consignment →';
+      }
+    });
+  </script>
+</body>
+</html>

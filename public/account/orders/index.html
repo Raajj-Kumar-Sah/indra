@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Corporate Account & Quotations | Indira Industries</title>
+  <link rel="stylesheet" href="/theme.css">
+  <style>
+    .orders-shell {
+      max-width: 1120px;
+      margin: auto;
+      padding: 55px 24px 90px;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .orders-shell h1 {
+      font-size: clamp(34px, 5vw, 54px);
+      margin: 12px 0;
+      color: #171710;
+    }
+    .orders-intro {
+      font-size: 14px;
+      color: #666;
+      max-width: 680px;
+      line-height: 1.7;
+    }
+    .orders-tools {
+      display: flex;
+      gap: 12px;
+      margin: 28px 0;
+      flex-wrap: wrap;
+    }
+    .orders-list {
+      display: grid;
+      gap: 18px;
+    }
+    .order-card {
+      border: 1px solid #e2ddd0;
+      background: #fff;
+      padding: 26px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+      transition: border-color 0.2s;
+    }
+    .order-card:hover {
+      border-color: #b58b2e;
+    }
+    .order-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #f0ecdf;
+      padding-bottom: 14px;
+      margin-bottom: 16px;
+    }
+    .order-head h2 {
+      font-size: 20px;
+      margin: 0 0 4px;
+      color: #171710;
+    }
+    .order-meta {
+      font-size: 12px;
+      color: #888;
+      margin: 0;
+    }
+    .order-status {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: #f4f0e6;
+      color: #6b5522;
+      padding: 7px 12px;
+      border-radius: 2px;
+      height: max-content;
+    }
+    .order-status.received { background: #e8f4fd; color: #1a5c8c; }
+    .order-status.in_production { background: #fef7e0; color: #8a6300; }
+    .order-status.shipped { background: #e6f7ec; color: #1c6b38; }
+    .order-status.delivered { background: #d7f2df; color: #12542a; }
+
+    .order-items-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 14px 0;
+    }
+    .order-items-table th {
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #777;
+      padding: 6px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .order-items-table td {
+      padding: 10px 0;
+      border-bottom: 1px solid #f6f3eb;
+    }
+    .order-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 14px;
+      padding-top: 12px;
+      font-size: 13px;
+    }
+    .track-link {
+      color: #b58b2e;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .track-link:hover { text-decoration: underline; }
+    .orders-empty {
+      padding: 40px;
+      background: #f9f7f1;
+      border: 1px dashed #ded8c6;
+      color: #666;
+      text-align: center;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">
+      <span class="brand-mark" style="background:#b58b2e;color:#fff;padding:6px 10px;font-weight:900">IND</span>
+      <span class="brand-copy"><b>INDIRA INDUSTRIES</b><small>THE NAME OF TRUST</small></span>
+    </a>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/shop/">Catalogue</a>
+      <a href="/track-order/">Track Order</a>
+    </nav>
+    <button id="signOutBtn" class="header-cta" style="cursor:pointer">Sign Out →</button>
+  </header>
+
+  <main class="orders-shell">
+    <div class="eyebrow" style="color:#b58b2e;font-size:12px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase">CLIENT PORTAL</div>
+    <h1>Commercial Quotations & Orders.</h1>
+    <p class="orders-intro">
+      Manage submitted RFQs, track production schedules, and view dispatched consignment notes. All commercial orders undergo technical verification before batch release.
+    </p>
+
+    <div class="orders-tools">
+      <button class="btn btn-dark" id="refreshBtn">Refresh List ↻</button>
+      <a class="btn btn-gold" href="/shop/">New Commercial Request +</a>
+    </div>
+
+    <p id="accountBadge" class="orders-intro" style="font-weight:600;color:#333" role="status"></p>
+
+    <div class="orders-list" id="ordersList">
+      <div class="orders-empty">Loading records...</div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <span>© <span id="year"></span> Indira Industries. All rights reserved.</span>
+      <a href="mailto:sales@indiraindustries.co.in">Commercial Sales Desk</a>
+    </div>
+  </footer>
+
+  <script>
+    (async function () {
+      const $ = id => document.getElementById(id);
+      const safe = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      const money = p => Number.isSafeInteger(p) && p >= 0 ? new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(p / 100) : 'Quote Required';
+
+      $('year').textContent = new Date().getFullYear();
+
+      const token = localStorage.getItem('indira_auth_token');
+      const savedUser = (() => {
+        try { return JSON.parse(localStorage.getItem('indira_auth_user') || 'null'); } catch (_) { return null; }
+      })();
+
+      if (!token) {
+        location.replace('/login?next=' + encodeURIComponent('/account/orders/'));
+        return;
+      }
+
+      if (savedUser && savedUser.email) {
+        $('accountBadge').textContent = 'Signed in as: ' + savedUser.email + (savedUser.role === 'admin' ? ' (Administrator)' : '');
+      }
+
+      $('signOutBtn').addEventListener('click', () => {
+        localStorage.removeItem('indira_auth_token');
+        localStorage.removeItem('indira_auth_user');
+        location.replace('/login');
+      });
+
+      async function loadOrders() {
+        $('ordersList').innerHTML = '<div class="orders-empty">Loading your commercial records...</div>';
+        try {
+          const res = await fetch('/api/orders', {
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer ' + token
+            }
+          });
+
+          if (res.status === 401) {
+            location.replace('/login?next=' + encodeURIComponent('/account/orders/'));
+            return;
+          }
+
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Failed to load requests');
+
+          const orders = data.orders || [];
+          if (!orders.length) {
+            $('ordersList').innerHTML = '<div class="orders-empty">No commercial requests found. <a href="/shop/" style="color:#b58b2e;font-weight:700">Browse the product catalogue</a> to create your first quotation request.</div>';
+            return;
+          }
+
+          $('ordersList').innerHTML = orders.map(o => `
+            <article class="order-card">
+              <div class="order-head">
+                <div>
+                  <h2>${safe(o.order_number)}</h2>
+                  <p class="order-meta">Placed on ${new Date(o.created_at).toLocaleDateString()} at ${new Date(o.created_at).toLocaleTimeString()} • ${safe(o.company_name || 'Direct Client')}</p>
+                </div>
+                <span class="order-status ${safe(o.status)}">${safe(o.status.replace(/_/g, ' '))}</span>
+              </div>
+
+              <table class="order-items-table">
+                <thead>
+                  <tr>
+                    <th>Item Description</th>
+                    <th>Division</th>
+                    <th style="text-align:center">Quantity</th>
+                    <th style="text-align:right">Estimated Unit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${(Array.isArray(o.items) ? o.items : []).map(i => `
+                    <tr>
+                      <td><b>${safe(i.name)}</b></td>
+                      <td><span style="font-size:11px;background:#f3f0e6;padding:2px 6px;border-radius:2px">${safe(i.division)}</span></td>
+                      <td style="text-align:center">${safe(i.quantity)}</td>
+                      <td style="text-align:right">${money(i.unit_price_paise)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+
+              <div class="order-foot">
+                <div>
+                  <span style="color:#777;font-size:12px">Estimated Value:</span>
+                  <b style="font-size:15px;color:#171710;margin-left:6px">${money(o.subtotal_paise)}</b>
+                  ${o.tracking_number ? `<span style="margin-left:14px;color:#2e6930;font-size:12px">🚚 Carrier: <b>${safe(o.tracking_carrier)}</b> (${safe(o.tracking_number)})</span>` : ''}
+                </div>
+                <a class="track-link" href="/track-order/">Live Tracking Status →</a>
+              </div>
+            </article>
+          `).join('');
+        } catch (err) {
+          $('ordersList').innerHTML = `<div class="orders-empty" style="color:#a33428">${safe(err.message)}</div>`;
+        }
+      }
+
+      $('refreshBtn').addEventListener('click', loadOrders);
+      await loadOrders();
+    })();
+  </script>
+</body>
+</html>
